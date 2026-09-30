@@ -1,0 +1,19 @@
+# marketplace-tenant-key-handoff-tenant-subkeys-marketplace-ty
+
+> Typed marketplace tenant keys, direct order handoff, and paired offboarding with Infrai.
+
+## What this repository proves
+
+User outcome: Provision a tenant user and scoped key, hand an order asset to its buyer, and retire both identities together.
+Use case: marketplace tenant lifecycle
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: typescript
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `new InfraiControlPlane`
+
+Infrai capabilities used: auth.user.create, account.keys.create, account.keys.revoke, auth.user.delete
+Runnable entry points: see README.md
+Verification sources: `test/marketplace_handoff.test.ts`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt

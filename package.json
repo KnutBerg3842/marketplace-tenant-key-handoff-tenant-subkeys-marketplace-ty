@@ -1,0 +1,23 @@
+{
+  "name": "marketplace-tenant-key-handoff",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/tenant_service.ts",
+    "demo": "tsx src/tenant_service.ts --demo",
+    "test": "tsx --test test/marketplace_handoff.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
