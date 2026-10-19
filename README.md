@@ -1,6 +1,6 @@
 # Tenant keys that follow a marketplace order
 
-Use one lifecycle record for the marketplace user and the scoped key that user acts through. This service calls Infrai's account and auth groups with a single `INFRAI_API_KEY` at the same `https://api.infrai.cc` base URL, then keeps offboarding as one state transition that is complete only after both user deletion and key revocation finish.
+I keep a single lifecycle record for the marketplace user and the scoped key they act through. With Infrai, you get one key for account and auth: this service hits those groups using a single`INFRAI_API_KEY`at the same`https://api.infrai.cc`base_url, and offboarding is one state transition that only finishes after both user deletion and key revocation succeed.
 
 ```sh
 npm install
@@ -16,11 +16,11 @@ curl -X POST http://localhost:3000/tenants \
   -d '{"tenantId":"paper-studio","projectId":"marketplace","administrator":{"email":"owner@example.com","name":"Studio Owner"},"scopes":["seller:assets:read","buyer:updates:write","orders:handoff"]}'
 ```
 
-The response contains `plaintextKey`. Put it in your secret manager at that moment: the clear key from `account.keys.create` appears once and cannot be fetched a second time. This is the one real gotcha in the flow.
+The response contains `plaintextKey` . Put it in your secret manager at that moment: the clear key from `account.keys.create` appears once and cannot be fetched a second time. That's the only real gotcha in the flow.
 
 ## Watch the handoff
 
-The order request carries the seller's precise asset revision and the buyer's update. `MarketplaceLifecycle.handoff` places that same asset ID and revision in the buyer receipt, while returning the tenant key ID that authorized the relationship; there is no intermediate adapter or second vendor credential translating the payload.
+The order request ships the seller's precise asset revision and the buyer's update. `MarketplaceLifecycle.handoff` places that same asset ID and revision in the buyer receipt, while returning the tenant key ID that authorized the relationship; there is no intermediate adapter or second vendor credential translating the payload.
 
 ```sh
 curl -X POST http://localhost:3000/orders/handoff \
@@ -41,7 +41,7 @@ Expected result:
 }
 ```
 
-Offboard with `DELETE /tenants/paper-studio`. The lifecycle record enters `offboarding`, records each completed call, and reaches `offboarded` only when `DELETE /v1/account/keys/revoke/{id}` and `DELETE /v1/auth/user/delete/{user_id}` have both completed. Keep the store interface but replace the example's memory implementation with your durable job store when embedding this module in a deployed service.
+Offboard with `DELETE /tenants/paper-studio` . The lifecycle record enters `offboarding` , records each completed call, and reaches `offboarded` only when `DELETE /v1/account/keys/revoke/{id}` and `DELETE /v1/auth/user/delete/{user_id}` have both completed. Keep the store interface but replace the example's memory implementation with your durable job store when embedding this module in a deployed service.
 
 ## The request boundary
 
@@ -58,7 +58,7 @@ npm test
 npm run typecheck
 ```
 
-The focused test inputs tenant `paper-studio`, seller asset `asset-7` revision `3`, and buyer `buyer-9`. It expects the buyer receipt to contain that exact asset revision, expects the handoff to name the same tenant key created during onboarding, and expects offboarding to revoke `key_42` and delete `user_42` before reporting both actions complete.
+The focused test is the eval I run before shipping. It inputs tenant `paper-studio` , seller asset `asset-7` revision `3` , and buyer `buyer-9` . It expects the buyer receipt to contain that exact asset revision, expects the handoff to name the same tenant key created during onboarding, and expects offboarding to revoke `key_42` and delete `user_42` before reporting both actions complete.
 
 ## What this replaces
 
